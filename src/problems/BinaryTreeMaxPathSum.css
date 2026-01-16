@@ -1,0 +1,212 @@
+.viz-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.viz-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: var(--bg-tertiary);
+}
+
+.viz-canvas-area {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.viz-controls {
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.control-btn {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover:not(:disabled) {
+    background-color: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.control-btn.primary {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+.control-btn.primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 4px;
+    background-color: var(--bg-secondary);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--accent-primary);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+.viz-sidebar {
+    width: 300px;
+    background-color: var(--bg-primary);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.info-panel {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.info-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.stats-panel {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-item {
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    font-family: monospace;
+}
+
+.step-description {
+    margin-top: auto;
+    padding: 1rem;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    min-height: 80px;
+}
+
+/* Tree Nodes */
+.tree-node {
+    fill: var(--bg-primary);
+    stroke: var(--text-secondary);
+    stroke-width: 2px;
+    transition: all 0.3s ease;
+}
+
+.tree-node.visiting {
+    stroke: var(--warning);
+    fill: var(--warning);
+    fill-opacity: 0.2;
+}
+
+.tree-node.calculating {
+    stroke: var(--accent-primary);
+    fill: var(--accent-primary);
+    fill-opacity: 0.2;
+}
+
+.tree-node-text {
+    fill: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    /* Make text unclickable so hover works on circle */
+}
+
+/* Tree Links */
+.tree-link {
+    stroke: var(--border-color);
+    stroke-width: 3px;
+    transition: all 0.4s ease;
+}
+
+.tree-link.active {
+    stroke: var(--warning);
+    stroke-width: 4px;
+    stroke-dasharray: 10;
+    animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+.node-badge {
+    font-size: 12px;
+    font-weight: 700;
+    fill: var(--accent-primary);
+    stroke: var(--bg-primary);
+    stroke-width: 3px;
+    paint-order: stroke;
+}

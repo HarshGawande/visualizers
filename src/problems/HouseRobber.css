@@ -1,0 +1,92 @@
+/* House Robber Styles */
+.house-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+}
+
+.house {
+    position: relative;
+    width: 60px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    transition: all 0.5s ease;
+}
+
+.house-roof {
+    width: 0;
+    height: 0;
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-bottom: 30px solid var(--border);
+    position: relative;
+    top: -5px;
+}
+
+.house-base {
+    width: 60px;
+    height: 50px;
+    background-color: var(--secondary);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    position: relative;
+    z-index: 10;
+}
+
+.house.active .house-roof {
+    border-bottom-color: hsl(var(--primary));
+}
+
+.house.active .house-base {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    transform: scale(1.1);
+}
+
+.house.robbed .house-roof {
+    border-bottom-color: #22c55e;
+    /* Green */
+}
+
+.house.robbed .house-base {
+    border-color: #22c55e;
+    background-color: #22c55e;
+    color: white;
+}
+
+.house.skipped .house-base {
+    opacity: 0.5;
+    background-color: hsl(var(--muted));
+}
+
+.dp-table-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.dp-cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.dp-cell.active {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary) / 0.1);
+}
