@@ -1,0 +1,62 @@
+.grid-container {
+    display: grid;
+    gap: 2px;
+    padding: 1rem;
+    background-color: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.grid-cell {
+    width: 40px;
+    height: 40px;
+    background-color: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.grid-cell.blocked {
+    background-color: var(--foreground);
+    color: var(--background);
+}
+
+.grid-cell.start {
+    background-color: #22c55e;
+    /* Green */
+    color: white;
+    font-weight: bold;
+}
+
+.grid-cell.end {
+    border: 2px solid #ef4444;
+    /* Red */
+}
+
+.grid-cell.end.visited {
+    background-color: #ef4444;
+    color: white;
+}
+
+.grid-cell.visited {
+    background-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
+}
+
+.grid-cell.path {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    font-weight: bold;
+    transform: scale(0.9);
+    border-radius: 4px;
+}
+
+.grid-cell.active {
+    border: 2px solid #eab308;
+    /* Yellow processing ring */
+    z-index: 10;
+}

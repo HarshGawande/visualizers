@@ -8,7 +8,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { cn } from '../lib/utils';
 
-const SubarraySumK = () => {
+const SubarraySumK = ({ problem }) => {
     const [arrayInput, setArrayInput] = useState("[1,1,1]");
     const [kInput, setKInput] = useState(2);
 
@@ -145,6 +145,12 @@ const SubarraySumK = () => {
                     <CardTitle className="text-lg">Subarray Sum Equals K</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                    {problem && (
+                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
+                            <p className="font-semibold mb-1">Description</p>
+                            {problem.description}
+                        </div>
+                    )}
                     <div className="space-y-3">
                         <label className="text-sm font-medium text-muted-foreground block">Array & K</label>
                         <Input ref={inputRef} defaultValue={arrayInput} className="font-mono text-xs mb-2" placeholder="[1,1,1]" />

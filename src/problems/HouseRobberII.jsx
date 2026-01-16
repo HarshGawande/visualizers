@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 import { cn } from '../lib/utils';
 import './HouseRobber.css';
 
-const HouseRobberII = () => {
+const HouseRobberII = ({ problem }) => {
     const [arrayInput, setArrayInput] = useState("[2,3,2]");
     const [houses, setHouses] = useState([2, 3, 2]);
     const [currentStep, setCurrentStep] = useState(0);
@@ -185,6 +185,12 @@ const HouseRobberII = () => {
                     <CardTitle className="text-lg">House Robber II (Circular)</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                    {problem && (
+                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
+                            <p className="font-semibold mb-1">Description</p>
+                            {problem.description}
+                        </div>
+                    )}
                     <div className="space-y-3">
                         <label className="text-sm font-medium text-muted-foreground block">
                             House Values (Array)

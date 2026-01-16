@@ -113,7 +113,7 @@ const getNodes = (node, nodes = []) => {
     return nodes;
 };
 
-const BinaryTreeMaxPathSum = () => {
+const BinaryTreeMaxPathSum = ({ problem }) => {
     const [treeInput, setTreeInput] = useState("[-10,9,20,null,null,15,7]");
     const [treeRoot, setTreeRoot] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -321,6 +321,12 @@ const BinaryTreeMaxPathSum = () => {
                 </CardHeader>
 
                 <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                    {problem && (
+                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
+                            <p className="font-semibold mb-1">Description</p>
+                            {problem.description}
+                        </div>
+                    )}
                     <div className="space-y-3">
                         <label className="text-sm font-medium text-muted-foreground block">
                             Tree Input (BFS Array)
