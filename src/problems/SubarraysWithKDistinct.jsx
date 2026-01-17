@@ -6,6 +6,8 @@ import { Input } from '../components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { cn } from '../lib/utils';
 import './SubarraysWithKDistinct.css';
+import ProblemInfo from '../components/ProblemInfo';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '../components/ui/resizable';
 
 const SubarraysWithKDistinct = ({ problem }) => {
     const [arrayInput, setArrayInput] = useState("[1,2,1,2,3]");
@@ -151,123 +153,128 @@ const SubarraysWithKDistinct = ({ problem }) => {
 
     return (
         <div className="flex h-full w-full">
-            <Card className="w-[350px] flex flex-col h-full rounded-none border-r border-border bg-background">
-                <CardHeader className="border-b border-border pb-4">
-                    <CardTitle className="text-lg">Subarrays with K Different Integers (992)</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
-                    {problem && (
-                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
-                            <p className="font-semibold mb-1">Description</p>
-                            {problem.description}
-                        </div>
-                    )}
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-muted-foreground block">
-                            Array
-                        </label>
-                        <Input
-                            ref={inputRef}
-                            defaultValue={arrayInput}
-                            placeholder="[1,2,1,2,3]"
-                            className="font-mono text-xs"
-                        />
-                        <label className="text-sm font-medium text-muted-foreground block">
-                            K (Distinct Count)
-                        </label>
-                        <div className="flex gap-2">
-                            <Input
-                                ref={kRef}
-                                defaultValue={kInput}
-                                placeholder="2"
-                                className="font-mono text-xs"
-                            />
-                            <Button onClick={parseInput} size="icon" variant="outline">
-                                <RefreshCw className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-
-                    <div className="p-4 rounded-lg bg-secondary border border-border">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                            Total Count
-                        </div>
-                        <div className="text-3xl font-bold font-mono text-primary">
-                            {currentData.currentTotal !== undefined ? currentData.currentTotal : 0}
-                        </div>
-                    </div>
-                    <div className="space-y-2 text-xs font-mono text-muted-foreground bg-muted/30 p-2 rounded">
-                        <div>Win1 Map: {getMapString(currentData.count1)} (Target &le; {k})</div>
-                        <div>Win2 Map: {getMapString(currentData.count2)} (Target &le; {k - 1})</div>
-                    </div>
-
-                    <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
-                        {currentData?.description || "Ready to start"}
-                    </div>
-                </CardContent>
-            </Card>
-
-            <div className="flex-1 flex flex-col relative">
-                <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto gap-12">
-                    {/* Array Visualization */}
-                    <div className="array-window-container">
-                        {nums.map((val, idx) => {
-                            const inWindow1 = idx >= (currentData.left1 ?? -1) && idx <= (currentData.right ?? -1);
-                            const inWindow2 = idx >= (currentData.left2 ?? -1) && idx <= (currentData.right ?? -1);
-
-                            // Visualize the "Valid Zone" [left1 ... left2-1] for current right
-                            const isValidStart = idx >= (currentData.left1 ?? -1) && idx < (currentData.left2 ?? -1) && idx <= (currentData.right ?? -1);
-
-                            return (
-                                <div key={idx} className={cn(
-                                    "array-item",
-                                    // inWindow1 && "border-primary",
-                                    isValidStart ? "bg-green-500/20 border-green-500" : (inWindow1 ? "border-primary/50" : "")
-                                )}>
-                                    {val}
-
-                                    {/* Pointers */}
-                                    <div className="absolute -bottom-8 w-full flex justify-center gap-1">
-                                        {currentData.left1 === idx && (
-                                            <div className="flex flex-col items-center pointer-left1">
-                                                <div className="pointer-marker" />
-                                                <span className="text-[10px]">L1</span>
-                                            </div>
-                                        )}
-                                        {currentData.left2 === idx && (
-                                            <div className="flex flex-col items-center pointer-left2">
-                                                <div className="pointer-marker" />
-                                                <span className="text-[10px]">L2</span>
-                                            </div>
-                                        )}
-                                        {currentData.right === idx && (
-                                            <div className="flex flex-col items-center pointer-right">
-                                                <div className="pointer-marker" />
-                                                <span className="text-[10px]">R</span>
-                                            </div>
-                                        )}
-                                    </div>
+            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+                <ResizablePanel defaultSize={20} minSize={20} maxSize={50} className="bg-background">
+                    <Card className="viz-sidebar flex flex-col h-full rounded-none border-0 border-r-0 bg-background">
+                        <CardHeader className="border-b border-border pb-4">
+                            <CardTitle className="text-lg">Subarrays with K Different Integers (992)</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                            <ProblemInfo problem={problem} />
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-muted-foreground block">
+                                    Array
+                                </label>
+                                <Input
+                                    ref={inputRef}
+                                    defaultValue={arrayInput}
+                                    placeholder="[1,2,1,2,3]"
+                                    className="font-mono text-xs"
+                                />
+                                <label className="text-sm font-medium text-muted-foreground block">
+                                    K (Distinct Count)
+                                </label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        ref={kRef}
+                                        defaultValue={kInput}
+                                        placeholder="2"
+                                        className="font-mono text-xs"
+                                    />
+                                    <Button onClick={parseInput} size="icon" variant="outline">
+                                        <RefreshCw className="h-4 w-4" />
+                                    </Button>
                                 </div>
-                            );
-                        })}
+                            </div>
+
+                            <div className="p-4 rounded-lg bg-secondary border border-border">
+                                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                                    Total Count
+                                </div>
+                                <div className="text-3xl font-bold font-mono text-primary">
+                                    {currentData.currentTotal !== undefined ? currentData.currentTotal : 0}
+                                </div>
+                            </div>
+                            <div className="space-y-2 text-xs font-mono text-muted-foreground bg-muted/30 p-2 rounded">
+                                <div>Win1 Map: {getMapString(currentData.count1)} (Target &le; {k})</div>
+                                <div>Win2 Map: {getMapString(currentData.count2)} (Target &le; {k - 1})</div>
+                            </div>
+
+                            <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
+                                {currentData?.description || "Ready to start"}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                <ResizablePanel defaultSize={80}>
+
+                    <div className="flex-1 flex flex-col relative">
+                        <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto gap-12">
+                            {/* Array Visualization */}
+                            <div className="array-window-container">
+                                {nums.map((val, idx) => {
+                                    const inWindow1 = idx >= (currentData.left1 ?? -1) && idx <= (currentData.right ?? -1);
+                                    const inWindow2 = idx >= (currentData.left2 ?? -1) && idx <= (currentData.right ?? -1);
+
+                                    // Visualize the "Valid Zone" [left1 ... left2-1] for current right
+                                    const isValidStart = idx >= (currentData.left1 ?? -1) && idx < (currentData.left2 ?? -1) && idx <= (currentData.right ?? -1);
+
+                                    return (
+                                        <div key={idx} className={cn(
+                                            "array-item",
+                                            // inWindow1 && "border-primary",
+                                            isValidStart ? "bg-green-500/20 border-green-500" : (inWindow1 ? "border-primary/50" : "")
+                                        )}>
+                                            {val}
+
+                                            {/* Pointers */}
+                                            <div className="absolute -bottom-8 w-full flex justify-center gap-1">
+                                                {currentData.left1 === idx && (
+                                                    <div className="flex flex-col items-center pointer-left1">
+                                                        <div className="pointer-marker" />
+                                                        <span className="text-[10px]">L1</span>
+                                                    </div>
+                                                )}
+                                                {currentData.left2 === idx && (
+                                                    <div className="flex flex-col items-center pointer-left2">
+                                                        <div className="pointer-marker" />
+                                                        <span className="text-[10px]">L2</span>
+                                                    </div>
+                                                )}
+                                                {currentData.right === idx && (
+                                                    <div className="flex flex-col items-center pointer-right">
+                                                        <div className="pointer-marker" />
+                                                        <span className="text-[10px]">R</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="max-w-xl text-center text-muted-foreground text-sm">
+                                <p>Items highlighted in <span className="text-green-500 font-bold">Green</span> form valid starting points for subarrays ending at R with exactly K distinct integers.</p>
+                                <p className="mt-2 text-xs opacity-75">Formula: Valid Count += (L2 - L1)</p>
+                            </div>
+
+                        </div>
+
+                        <ReplayControl
+                            currentStep={currentStep}
+                            totalSteps={steps.length}
+                            isPlaying={isPlaying}
+                            onPlayPause={() => setIsPlaying(!isPlaying)}
+                            onStepChange={setCurrentStep}
+                        />
+
                     </div>
-
-                    <div className="max-w-xl text-center text-muted-foreground text-sm">
-                        <p>Items highlighted in <span className="text-green-500 font-bold">Green</span> form valid starting points for subarrays ending at R with exactly K distinct integers.</p>
-                        <p className="mt-2 text-xs opacity-75">Formula: Valid Count += (L2 - L1)</p>
-                    </div>
-
-                </div>
-
-                <ReplayControl
-                    currentStep={currentStep}
-                    totalSteps={steps.length}
-                    isPlaying={isPlaying}
-                    onPlayPause={() => setIsPlaying(!isPlaying)}
-                    onStepChange={setCurrentStep}
-                />
-            </div>
-        </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </div >
     );
 };
 

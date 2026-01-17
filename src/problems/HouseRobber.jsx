@@ -7,6 +7,8 @@ import { Input } from '../components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { cn } from '../lib/utils';
 import './HouseRobber.css';
+import ProblemInfo from '../components/ProblemInfo';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '../components/ui/resizable';
 
 const HouseRobber = ({ problem }) => {
     const [arrayInput, setArrayInput] = useState("[1,2,3,1]");
@@ -158,143 +160,148 @@ const HouseRobber = ({ problem }) => {
 
     return (
         <div className="flex h-full w-full">
-            {/* Sidebar */}
-            <Card className="w-[350px] flex flex-col h-full rounded-none border-r border-border bg-background">
-                <CardHeader className="border-b border-border pb-4">
-                    <CardTitle className="text-lg">House Robber</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
-                    {problem && (
-                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
-                            <p className="font-semibold mb-1">Description</p>
-                            {problem.description}
-                        </div>
-                    )}
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-muted-foreground block">
-                            House Values (Array)
-                        </label>
-                        <div className="flex gap-2">
-                            <Input
-                                ref={inputRef}
-                                defaultValue={arrayInput}
-                                placeholder="e.g. [1,2,3,1]"
-                                className="font-mono text-xs"
-                            />
-                            <Button onClick={submitInput} size="icon" variant="outline">
-                                <RefreshCw className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-
-                    <div className="p-4 rounded-lg bg-secondary border border-border">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                            Current Max
-                        </div>
-                        <div className={cn(
-                            "text-3xl font-bold font-mono transition-colors",
-                            isFinished ? "text-green-500" : "text-primary"
-                        )}>
-                            {currentData.dpState ? Math.max(...currentData.dpState) : 0}
-                        </div>
-                    </div>
-
-                    <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
-                        {currentData?.description || "Ready to start"}
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Main Area */}
-            <div className="flex-1 flex flex-col relative">
-                <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto">
-                    {/* Houses Visualization */}
-                    <div className="house-container">
-                        {houses.map((val, idx) => (
-                            <div key={idx} className={cn(
-                                "house",
-                                getHouseState(idx) === 'active' && "active",
-                                // Simple highlighting for comparison
-                                currentData.highlight?.includes(idx) && "scale-110"
-                            )}>
-                                <div className={cn(
-                                    "house-roof",
-                                    "border-b-foreground transition-colors duration-300",
-                                    currentData.highlight?.includes(idx) && "border-b-primary"
-                                )} />
-                                <div className={cn(
-                                    "house-base transition-colors duration-300",
-                                    currentData.highlight?.includes(idx) ? "bg-primary text-primary-foreground border-primary" : "bg-card text-card-foreground"
-                                )}>
-                                    ${val}
-                                </div>
-
-
-                                <AnimatePresence>
-                                    {currentData.active === idx && (
-                                        <motion.div
-                                            layoutId="ninja"
-                                            initial={{ opacity: 0, scale: 0.5, y: -20 }}
-                                            animate={{
-                                                opacity: 1,
-                                                scale: 1,
-                                                y: 0,
-                                            }}
-                                            exit={{ opacity: 0, scale: 0.5 }}
-                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                            className="absolute -top-12 z-20 flex flex-col items-center filter drop-shadow-lg"
-                                        >
-                                            <div className="text-3xl">🥷</div>
-                                            {currentData.type === 'decision' && (
-                                                <motion.div
-                                                    initial={{ scale: 0, opacity: 0 }}
-                                                    animate={{ scale: 1, opacity: 1 }}
-                                                    className="text-lg bg-background/80 rounded-full px-1 -mt-1 backdrop-blur-sm border border-border shadow-sm"
-                                                >
-                                                    {currentData.description.includes("Robbing") ? "✅" : "❌"}
-                                                </motion.div>
-                                            )}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-
-                                <div className="text-xs text-muted-foreground mt-2 font-mono">
-                                    idx: {idx}
+            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+                <ResizablePanel defaultSize={20} minSize={20} maxSize={50} className="bg-background">
+                    {/* Sidebar */}
+                    <Card className="viz-sidebar flex flex-col h-full rounded-none border-0 border-r-0 bg-background">
+                        <CardHeader className="border-b border-border pb-4">
+                            <CardTitle className="text-lg">House Robber</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                            <ProblemInfo problem={problem} />
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-muted-foreground block">
+                                    House Values (Array)
+                                </label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        ref={inputRef}
+                                        defaultValue={arrayInput}
+                                        placeholder="e.g. [1,2,3,1]"
+                                        className="font-mono text-xs"
+                                    />
+                                    <Button onClick={submitInput} size="icon" variant="outline">
+                                        <RefreshCw className="h-4 w-4" />
+                                    </Button>
                                 </div>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* DP Table Visualization */}
-                    <div className="mt-12 w-full max-w-3xl">
-                        <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Dynamic Programming Table (Max Stolen So Far)</h3>
-                        <div className="dp-table-container">
-                            {currentData.dpState?.map((val, idx) => (
-                                <div key={idx} className={cn(
-                                    "dp-cell rounded-md transition-all duration-300",
-                                    idx === currentData.index ? "border-primary bg-primary/10 text-primary scale-110" : "bg-card text-muted-foreground"
-                                )}>
-                                    {val}
+                            <div className="p-4 rounded-lg bg-secondary border border-border">
+                                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                                    Current Max
                                 </div>
-                            ))}
-                            {/* Fill rest if any */}
-                            {Array.from({ length: Math.max(0, houses.length - (currentData.dpState?.length || 0)) }).map((_, i) => (
-                                <div key={`empty-${i}`} className="dp-cell rounded-md bg-muted/20 text-muted-foreground/30">0</div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                                <div className={cn(
+                                    "text-3xl font-bold font-mono transition-colors",
+                                    isFinished ? "text-green-500" : "text-primary"
+                                )}>
+                                    {currentData.dpState ? Math.max(...currentData.dpState) : 0}
+                                </div>
+                            </div>
 
-                {/* Controls */}
-                <ReplayControl
-                    currentStep={currentStep}
-                    totalSteps={steps.length}
-                    isPlaying={isPlaying}
-                    onPlayPause={() => setIsPlaying(!isPlaying)}
-                    onStepChange={setCurrentStep}
-                />
-            </div>
-        </div>
+                            <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
+                                {currentData?.description || "Ready to start"}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                <ResizablePanel defaultSize={80}>
+                    {/* Main Area */}
+                    <div className="flex-1 flex flex-col relative">
+                        <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto">
+                            {/* Houses Visualization */}
+                            <div className="house-container">
+                                {houses.map((val, idx) => (
+                                    <div key={idx} className={cn(
+                                        "house",
+                                        getHouseState(idx) === 'active' && "active",
+                                        // Simple highlighting for comparison
+                                        currentData.highlight?.includes(idx) && "scale-110"
+                                    )}>
+                                        <div className={cn(
+                                            "house-roof",
+                                            "border-b-foreground transition-colors duration-300",
+                                            currentData.highlight?.includes(idx) && "border-b-primary"
+                                        )} />
+                                        <div className={cn(
+                                            "house-base transition-colors duration-300",
+                                            currentData.highlight?.includes(idx) ? "bg-primary text-primary-foreground border-primary" : "bg-card text-card-foreground"
+                                        )}>
+                                            ${val}
+                                        </div>
+
+
+                                        <AnimatePresence>
+                                            {currentData.active === idx && (
+                                                <motion.div
+                                                    layoutId="ninja"
+                                                    initial={{ opacity: 0, scale: 0.5, y: -20 }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        scale: 1,
+                                                        y: 0,
+                                                    }}
+                                                    exit={{ opacity: 0, scale: 0.5 }}
+                                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                    className="absolute -top-12 z-20 flex flex-col items-center filter drop-shadow-lg"
+                                                >
+                                                    <div className="text-3xl">🥷</div>
+                                                    {currentData.type === 'decision' && (
+                                                        <motion.div
+                                                            initial={{ scale: 0, opacity: 0 }}
+                                                            animate={{ scale: 1, opacity: 1 }}
+                                                            className="text-lg bg-background/80 rounded-full px-1 -mt-1 backdrop-blur-sm border border-border shadow-sm"
+                                                        >
+                                                            {currentData.description.includes("Robbing") ? "✅" : "❌"}
+                                                        </motion.div>
+                                                    )}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+
+                                        <div className="text-xs text-muted-foreground mt-2 font-mono">
+                                            idx: {idx}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* DP Table Visualization */}
+                            <div className="mt-12 w-full max-w-3xl">
+                                <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Dynamic Programming Table (Max Stolen So Far)</h3>
+                                <div className="dp-table-container">
+                                    {currentData.dpState?.map((val, idx) => (
+                                        <div key={idx} className={cn(
+                                            "dp-cell rounded-md transition-all duration-300",
+                                            idx === currentData.index ? "border-primary bg-primary/10 text-primary scale-110" : "bg-card text-muted-foreground"
+                                        )}>
+                                            {val}
+                                        </div>
+                                    ))}
+                                    {/* Fill rest if any */}
+                                    {Array.from({ length: Math.max(0, houses.length - (currentData.dpState?.length || 0)) }).map((_, i) => (
+                                        <div key={`empty-${i}`} className="dp-cell rounded-md bg-muted/20 text-muted-foreground/30">0</div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Controls */}
+                        <ReplayControl
+                            currentStep={currentStep}
+                            totalSteps={steps.length}
+                            isPlaying={isPlaying}
+                            onPlayPause={() => setIsPlaying(!isPlaying)}
+                            onStepChange={setCurrentStep}
+                        />
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </div >
     );
 };
 

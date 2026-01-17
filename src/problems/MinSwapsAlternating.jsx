@@ -6,6 +6,8 @@ import { Input } from '../components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { cn } from '../lib/utils';
 import './MinSwapsAlternating.css';
+import ProblemInfo from '../components/ProblemInfo';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '../components/ui/resizable';
 
 const MinSwapsAlternating = ({ problem }) => {
     const [inputStr, setInputStr] = useState("111000");
@@ -128,96 +130,101 @@ const MinSwapsAlternating = ({ problem }) => {
 
     return (
         <div className="flex h-full w-full">
-            <Card className="w-[350px] flex flex-col h-full rounded-none border-r border-border bg-background">
-                <CardHeader className="border-b border-border pb-4">
-                    <CardTitle className="text-lg">Min Swaps to Alternating (1864)</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
-                    {problem && (
-                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
-                            <p className="font-semibold mb-1">Description</p>
-                            {problem.description}
-                        </div>
-                    )}
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-muted-foreground block">
-                            Binary String
-                        </label>
-                        <div className="flex gap-2">
-                            <Input
-                                ref={inputRef}
-                                defaultValue={inputStr}
-                                placeholder="111000"
-                                className="font-mono text-xs"
-                            />
-                            <Button onClick={updateInput} size="icon" variant="outline">
-                                <RefreshCw className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-
-                    <div className="p-4 rounded-lg bg-secondary border border-border">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                            Result
-                        </div>
-                        <div className={cn(
-                            "text-3xl font-bold font-mono transition-colors",
-                            currentData.type === 'finish' ? "text-green-500" : "text-primary"
-                        )}>
-                            {currentData.result !== undefined ? currentData.result : '-'}
-                        </div>
-                    </div>
-
-                    <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
-                        {currentData?.description || "Ready to start"}
-                    </div>
-                </CardContent>
-            </Card>
-
-            <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto bg-muted/5 relative">
-                {/* Visualizer */}
-                <div className="flex flex-col items-center gap-8 w-full max-w-4xl">
-
-                    <div className="text-center">
-                        <h3 className="text-xl font-bold mb-4">Input String</h3>
-                        <div className="string-container">
-                            {s.split('').map((char, idx) => (
-                                <div key={idx} className={cn(
-                                    "char-box",
-                                    currentData.mismatchIndices?.includes(idx) ? "mismatch" : "bg-card"
-                                )}>
-                                    {char}
-                                    <span className="text-[10px] text-muted-foreground mt-1 text-inherit opacity-50">{idx}</span>
+            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+                <ResizablePanel defaultSize={20} minSize={20} maxSize={50} className="bg-background">
+                    <Card className="viz-sidebar flex flex-col h-full rounded-none border-0 border-r-0 bg-background">
+                        <CardHeader className="border-b border-border pb-4">
+                            <CardTitle className="text-lg">Min Swaps to Alternating (1864)</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                            <ProblemInfo problem={problem} />
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-muted-foreground block">
+                                    Binary String
+                                </label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        ref={inputRef}
+                                        defaultValue={inputStr}
+                                        placeholder="111000"
+                                        className="font-mono text-xs"
+                                    />
+                                    <Button onClick={updateInput} size="icon" variant="outline">
+                                        <RefreshCw className="h-4 w-4" />
+                                    </Button>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {currentData.pattern && (
-                        <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <h3 className="text-sm font-bold mb-2 text-muted-foreground uppercase tracking-wider">Comparing With Target</h3>
-                            <div className="string-container">
-                                {currentData.pattern.split('').map((char, idx) => (
-                                    <div key={idx} className="char-box bg-secondary border-dashed">
-                                        {char}
-                                    </div>
-                                ))}
                             </div>
+
+                            <div className="p-4 rounded-lg bg-secondary border border-border">
+                                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                                    Result
+                                </div>
+                                <div className={cn(
+                                    "text-3xl font-bold font-mono transition-colors",
+                                    currentData.type === 'finish' ? "text-green-500" : "text-primary"
+                                )}>
+                                    {currentData.result !== undefined ? currentData.result : '-'}
+                                </div>
+                            </div>
+
+                            <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
+                                {currentData?.description || "Ready to start"}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                <ResizablePanel defaultSize={80}>
+
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto bg-muted/5 relative">
+                        {/* Visualizer */}
+                        <div className="flex flex-col items-center gap-8 w-full max-w-4xl">
+
+                            <div className="text-center">
+                                <h3 className="text-xl font-bold mb-4">Input String</h3>
+                                <div className="string-container">
+                                    {s.split('').map((char, idx) => (
+                                        <div key={idx} className={cn(
+                                            "char-box",
+                                            currentData.mismatchIndices?.includes(idx) ? "mismatch" : "bg-card"
+                                        )}>
+                                            {char}
+                                            <span className="text-[10px] text-muted-foreground mt-1 text-inherit opacity-50">{idx}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {currentData.pattern && (
+                                <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <h3 className="text-sm font-bold mb-2 text-muted-foreground uppercase tracking-wider">Comparing With Target</h3>
+                                    <div className="string-container">
+                                        {currentData.pattern.split('').map((char, idx) => (
+                                            <div key={idx} className="char-box bg-secondary border-dashed">
+                                                {char}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                         </div>
-                    )}
 
-                </div>
+                        <ReplayControl
+                            currentStep={currentStep}
+                            totalSteps={steps.length}
+                            isPlaying={isPlaying}
+                            onPlayPause={() => setIsPlaying(!isPlaying)}
+                            onStepChange={setCurrentStep}
+                            className="absolute bottom-8"
+                        />
 
-                <ReplayControl
-                    currentStep={currentStep}
-                    totalSteps={steps.length}
-                    isPlaying={isPlaying}
-                    onPlayPause={() => setIsPlaying(!isPlaying)}
-                    onStepChange={setCurrentStep}
-                    className="absolute bottom-8"
-                />
-            </div>
-        </div>
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </div >
     );
 };
 

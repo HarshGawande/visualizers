@@ -78,6 +78,7 @@
     h5,
     h6 {
         font-family: 'Instrument Serif', serif;
+        font-style: italic
     }
 
     /* Ensure SVGs inherit color correctly in both modes */

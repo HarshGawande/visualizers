@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Copy, Check } from 'lucide-react';
 import ReplayControl from '../components/ReplayControl';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { cn } from '../lib/utils';
-import './BinaryTreeMaxPathSum.css';
+import ProblemInfo from '../components/ProblemInfo';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '../components/ui/resizable';
 
 // Layout Configuration
 const CANVAS_WIDTH = 800;
@@ -63,23 +64,40 @@ const parseTreeArray = (inputStr) => {
     }
 };
 
-// Helper: Assign Coordinates recursively
-const assignCoordinates = (node, x, y, dx) => {
+// Helper: Get Tree Depth
+const getTreeDepth = (node) => {
+    if (!node) return 0;
+    let max = 0;
+    if (node.children) {
+        node.children.forEach(c => {
+            if (c) max = Math.max(max, getTreeDepth(c));
+        });
+    }
+    return max + 1;
+};
+
+// Helper: Assign Coordinates with dynamic width to prevent overlap
+const assignCoordinates = (node, x, y, level, maxDepth) => {
     if (!node) return;
     node.x = x;
     node.y = y;
 
-    // Create generic children structure for the visualizer if parsing created sparse array
     if (!node.children) node.children = [];
+
+    // Dynamic horizontal spacing based on tree height
+    // Offset = 2^(maxDepth - level - 2) * UNIT
+    const X_UNIT = 60;
+    const exponent = Math.max(0, maxDepth - level - 2);
+    const offset = Math.pow(2, exponent) * X_UNIT;
 
     // Left Child
     if (node.children[0]) {
-        assignCoordinates(node.children[0], x - dx, y + DY, dx / 1.8);
+        assignCoordinates(node.children[0], x - offset, y + DY, level + 1, maxDepth);
     }
 
     // Right Child
     if (node.children[1]) {
-        assignCoordinates(node.children[1], x + dx, y + DY, dx / 1.8);
+        assignCoordinates(node.children[1], x + offset, y + DY, level + 1, maxDepth);
     }
 };
 
@@ -113,7 +131,7 @@ const getNodes = (node, nodes = []) => {
     return nodes;
 };
 
-const BinaryTreeMaxPathSum = ({ problem }) => {
+const BinaryTreeMaxPathSum = ({ problem, isDarkMode }) => {
     const [treeInput, setTreeInput] = useState("[-10,9,20,null,null,15,7]");
     const [treeRoot, setTreeRoot] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -126,7 +144,8 @@ const BinaryTreeMaxPathSum = ({ problem }) => {
     useEffect(() => {
         const root = parseTreeArray(treeInput);
         if (root) {
-            assignCoordinates(root, CANVAS_WIDTH / 2, 50, INITIAL_DX);
+            const depth = getTreeDepth(root);
+            assignCoordinates(root, 0, 50, 0, depth); // Start at x=0
             setTreeRoot(root);
             setCurrentStep(0);
             setIsPlaying(false);
@@ -142,6 +161,38 @@ const BinaryTreeMaxPathSum = ({ problem }) => {
         if (inputRef.current) {
             setTreeInput(inputRef.current.value);
         }
+    };
+
+    // Canvas State
+    const [viewState, setViewState] = useState({ x: CANVAS_WIDTH / 2, y: 0, scale: 1 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+    const handleMouseDown = (e) => {
+        setIsDragging(true);
+        // Store click pos relative to current viewState.x/y to maintain offset
+        setDragStart({ x: e.clientX - viewState.x, y: e.clientY - viewState.y });
+    };
+
+    const handleMouseMove = (e) => {
+        if (isDragging) {
+            setViewState(prev => ({
+                ...prev,
+                x: e.clientX - dragStart.x,
+                y: e.clientY - dragStart.y
+            }));
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleWheel = (e) => {
+        const scaleIntensity = 0.001;
+        // Limit scale between 0.5x and 3x
+        const newScale = Math.min(Math.max(0.5, viewState.scale + e.deltaY * -scaleIntensity), 3);
+        setViewState(prev => ({ ...prev, scale: newScale }));
     };
 
     // Algorithm Simulation
@@ -293,7 +344,7 @@ const BinaryTreeMaxPathSum = ({ problem }) => {
         }
 
         if (currentData.nodeId === id) {
-            if (currentData.type === 'visit') return 'visiting';
+            if (currentData.type === 'visit' || currentData.type === 'traverse' || currentData.type === 'return') return 'visiting';
             if (currentData.type === 'calculate') return 'calculating';
         }
         return 'default';
@@ -314,156 +365,199 @@ const BinaryTreeMaxPathSum = ({ problem }) => {
 
     return (
         <div className="viz-container flex h-full w-full">
-            {/* Sidebar Info */}
-            <Card className="viz-sidebar w-[350px] flex flex-col h-full rounded-none border-r border-border bg-background">
-                <CardHeader className="border-b border-border pb-4">
-                    <CardTitle className="text-lg">Binary Tree Max Path Sum</CardTitle>
-                </CardHeader>
+            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+                <ResizablePanel defaultSize={25} minSize={20} maxSize={50} className="bg-background">
+                    {/* Sidebar Info */}
+                    <Card className="viz-sidebar flex flex-col h-full rounded-none border-0 border-r-0 bg-background">
+                        <CardHeader className="border-b border-border pb-4">
+                            <CardTitle className="text-lg">Binary Tree Max Path Sum</CardTitle>
+                        </CardHeader>
 
-                <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
-                    {problem && (
-                        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg border border-border">
-                            <p className="font-semibold mb-1">Description</p>
-                            {problem.description}
-                        </div>
-                    )}
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-muted-foreground block">
-                            Tree Input (BFS Array)
-                        </label>
-                        <div className="flex gap-2">
-                            <Input
-                                ref={inputRef}
-                                defaultValue={treeInput}
-                                placeholder="e.g. [-10,9,20,null,null,15,7]"
-                                className="font-mono text-xs"
-                            />
-                            <Button onClick={submitTree} size="icon" variant="outline">
-                                <RefreshCw className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
+                        <CardContent className="flex-1 overflow-y-auto space-y-6 pt-6">
+                            <ProblemInfo problem={problem} />
 
-                    <div className="space-y-4">
-                        <div className="p-4 rounded-lg bg-secondary border border-border">
-                            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                                Global Max Sum
-                            </div>
-                            <div className={cn(
-                                "text-3xl font-bold font-mono transition-colors",
-                                isFinished ? "text-green-500" : "text-primary"
-                            )}>
-                                {currentData?.globalMax === undefined || currentData?.globalMax === -Infinity ? '—' : currentData.globalMax}
-                            </div>
-                        </div>
-
-                        {currentData?.type === 'calculate' && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="p-4 rounded-lg bg-secondary/50 border border-border space-y-2"
-                            >
-                                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    Calculating Node: <span className="text-foreground">{currentData.vals.self}</span>
+                            <div className="rounded-lg bg-muted/50 border border-border p-4">
+                                <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Algorithm Trace</h3>
+                                <div className="text-sm font-mono text-balance text-foreground">
+                                    {currentData?.description || "Ready to start"}
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                                    <div className="flex justify-between"><span>Left Gain:</span> <span>{currentData.vals.left}</span></div>
-                                    <div className="flex justify-between"><span>Right Gain:</span> <span>{currentData.vals.right}</span></div>
-                                    <div className="col-span-2 border-t border-border pt-2 mt-1 flex justify-between font-bold text-primary">
-                                        <span>Path Sum:</span>
-                                        <span>{currentData.vals.total}</span>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-muted-foreground block">
+                                    Tree Input (BFS Array)
+                                </label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        ref={inputRef}
+                                        defaultValue={treeInput}
+                                        placeholder="e.g. [-10,9,20,null,null,15,7]"
+                                        className="font-mono text-xs"
+                                    />
+                                    <Button onClick={submitTree} size="icon" variant="outline">
+                                        <RefreshCw className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="p-4 rounded-lg bg-secondary border border-border">
+                                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                                        Global Max Sum
+                                    </div>
+                                    <div className={cn(
+                                        "text-3xl font-bold font-mono transition-colors",
+                                        isFinished ? "text-green-500" : "text-primary"
+                                    )}>
+                                        {currentData?.globalMax === undefined || currentData?.globalMax === -Infinity ? '—' : currentData.globalMax}
                                     </div>
                                 </div>
-                            </motion.div>
-                        )}
-                    </div>
 
-                    <div className="text-sm text-balance text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
-                        {currentData?.description || "Ready to start"}
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Main Visual Area */}
-            <div className="viz-main flex-1 flex flex-col relative">
-                <div className="viz-canvas-area flex-1 relative overflow-hidden flex items-center justify-center">
-                    <svg width="800" height="400" viewBox="0 0 800 400" className="drop-shadow-sm">
-                        {/* Links */}
-                        {allLinks.map((link) => (
-                            <line
-                                key={link.id}
-                                x1={link.source.x}
-                                y1={link.source.y}
-                                x2={link.target.x}
-                                y2={link.target.y}
-                                className={cn(
-                                    "transition-all duration-500",
-                                    getLinkState(link) === 'active' && "stroke-yellow-500 stroke-[4px] tree-link-dash",
-                                    getLinkState(link) === 'success' && "stroke-green-500 stroke-[5px]",
-                                    getLinkState(link) === 'default' && "stroke-border stroke-2"
-                                )}
-                            />
-                        ))}
-
-                        {/* Nodes */}
-                        {allNodes.map((node) => {
-                            const state = getNodeState(node.id);
-                            return (
-                                <g key={node.id} transform={`translate(${node.x},${node.y})`}>
-                                    <motion.circle
-                                        r="24"
-                                        initial={false}
-                                        animate={{
-                                            scale: state !== 'default' ? 1.15 : 1,
-                                            fill: state === 'success' ? '#22c55e' :
-                                                (state === 'visiting' ? '#f59e0b' :
-                                                    (state === 'calculating' ? '#3b82f6' : 'hsl(var(--background))')),
-                                            fillOpacity: state === 'default' ? 1 : 0.2,
-                                            stroke: state === 'success' ? '#22c55e' :
-                                                (state === 'visiting' ? '#f59e0b' :
-                                                    (state === 'calculating' ? '#3b82f6' : 'hsl(var(--foreground))')),
-                                            strokeWidth: state === 'default' ? 2 : 3
-                                        }}
-                                        className="transition-colors duration-300"
-                                    />
-                                    <text
-                                        className={cn(
-                                            "text-sm font-semibold pointer-events-none select-none",
-                                            state === 'default' ? "fill-foreground" : "fill-foreground"
-                                        )}
-                                        dy="1"
-                                        textAnchor="middle"
-                                        dominantBaseline="middle"
+                                {currentData?.type === 'calculate' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-4 rounded-lg bg-secondary/50 border border-border space-y-2"
                                     >
-                                        {node.val}
-                                    </text>
+                                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                            Calculating Node: <span className="text-foreground">{currentData.vals.self}</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                                            <div className="flex justify-between"><span>Left Gain:</span> <span>{currentData.vals.left}</span></div>
+                                            <div className="flex justify-between"><span>Right Gain:</span> <span>{currentData.vals.right}</span></div>
+                                            <div className="col-span-2 border-t border-border pt-2 mt-1 flex justify-between font-bold text-primary">
+                                                <span>Path Sum:</span>
+                                                <span>{currentData.vals.total}</span>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                                    {state === 'calculating' && currentData.nodeId === node.id && (
-                                        <motion.text
-                                            initial={{ opacity: 0, y: -30 }}
-                                            animate={{ opacity: 1, y: -45 }}
-                                            exit={{ opacity: 0 }}
-                                            className="text-[10px] font-bold fill-primary"
-                                            textAnchor="middle"
-                                        >
-                                            {currentData.vals.total}
-                                        </motion.text>
-                                    )}
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                <ResizablePanel defaultSize={75}>
+                    <div className="viz-main flex-1 flex flex-col relative h-full">
+                        <div className="viz-canvas-area flex-1 relative overflow-hidden flex items-center justify-center bg-zinc-50 dark:bg-zinc-950/50">
+                            <svg
+                                width="100%"
+                                height="100%"
+                                className="cursor-move touch-none block"
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                                onWheel={handleWheel}
+                            >
+                                <defs>
+                                    <pattern
+                                        id="grid-pattern"
+                                        width={24 * viewState.scale}
+                                        height={24 * viewState.scale}
+                                        patternUnits="userSpaceOnUse"
+                                        patternTransform={`translate(${viewState.x}, ${viewState.y})`}
+                                    >
+                                        <circle cx={1 * viewState.scale} cy={1 * viewState.scale} r={1 * viewState.scale} className="fill-neutral-400/30 dark:fill-neutral-600/30" />
+                                    </pattern>
+                                </defs>
+
+                                {/* Infinite Grid Background */}
+                                <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+
+                                {/* Content Group with Transform */}
+                                <g transform={`translate(${viewState.x}, ${viewState.y}) scale(${viewState.scale})`}>
+                                    {/* Links */}
+                                    {allLinks.map((link) => (
+                                        <line
+                                            key={link.id}
+                                            x1={link.source.x}
+                                            y1={link.source.y}
+                                            x2={link.target.x}
+                                            y2={link.target.y}
+                                            className={cn(
+                                                "transition-all duration-500",
+                                                getLinkState(link) === 'active' && "stroke-yellow-500 stroke-[4px] tree-link-dash",
+                                                getLinkState(link) === 'success' && "stroke-green-500 stroke-[5px]",
+                                                getLinkState(link) === 'default' && "stroke-border stroke-2"
+                                            )}
+                                        />
+                                    ))}
+
+                                    {/* Nodes */}
+                                    {allNodes.map((node) => {
+                                        const state = getNodeState(node.id);
+                                        return (
+                                            <g key={node.id} transform={`translate(${node.x},${node.y})`}>
+                                                <motion.circle
+                                                    r="24"
+                                                    initial={false}
+                                                    animate={{
+                                                        scale: state !== 'default' ? 1.15 : 1,
+                                                        fill: state === 'success' ? '#22c55e' :
+                                                            ((state === 'visiting' || state === 'calculating') ? (isDarkMode ? '#ffffff' : (state === 'visiting' ? '#f59e0b' : '#3b82f6')) :
+                                                                (isDarkMode ? '#0a0a0a' : '#ffffff')),
+                                                        fillOpacity: 1,
+                                                        stroke: state === 'success' ? '#22c55e' :
+                                                            (state === 'visiting' ? '#f59e0b' :
+                                                                (state === 'calculating' ? '#3b82f6' : (isDarkMode ? '#ffffff' : '#000000'))),
+                                                        strokeWidth: state === 'default' ? 2 : 3
+                                                    }}
+                                                />
+                                                <motion.text
+                                                    className={cn(
+                                                        "text-sm pointer-events-none select-none",
+                                                        state === 'default' ? "font-semibold" : "font-bold"
+                                                    )}
+                                                    dy="1"
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
+                                                    initial={false}
+                                                    animate={{
+                                                        fill: state === 'default'
+                                                            ? (isDarkMode ? '#ffffff' : '#000000')
+                                                            : (isDarkMode ? '#000000' : (state === 'visiting' ? '#000000' : '#ffffff'))
+                                                    }}
+                                                >
+                                                    {node.val}
+                                                </motion.text>
+
+                                                {state === 'calculating' && currentData.nodeId === node.id && (
+                                                    <motion.text
+                                                        initial={{ opacity: 0, y: -30 }}
+                                                        animate={{ opacity: 1, y: -45 }}
+                                                        exit={{ opacity: 0 }}
+                                                        className={cn(
+                                                            "text-[10px] font-bold",
+                                                            isDarkMode ? "fill-white" : "fill-black"
+                                                        )}
+                                                        textAnchor="middle"
+                                                        style={{ textShadow: '0px 0px 4px rgba(0,0,0,0.5)' }}
+                                                    >
+                                                        {currentData.vals.total}
+                                                    </motion.text>
+                                                )}
+                                            </g>
+                                        );
+                                    })}
                                 </g>
-                            );
-                        })}
-                    </svg>
-                </div>
+                            </svg>
+                        </div>
 
-                {/* Controls */}
-                <ReplayControl
-                    currentStep={currentStep}
-                    totalSteps={steps.length}
-                    isPlaying={isPlaying}
-                    onPlayPause={() => setIsPlaying(!isPlaying)}
-                    onStepChange={setCurrentStep}
-                />
-            </div>
+                        {/* Controls */}
+                        <ReplayControl
+                            currentStep={currentStep}
+                            totalSteps={steps.length}
+                            isPlaying={isPlaying}
+                            onPlayPause={() => setIsPlaying(!isPlaying)}
+                            onStepChange={setCurrentStep}
+                        />
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
         </div>
     );
 };
