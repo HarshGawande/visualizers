@@ -7,6 +7,11 @@ import CoinChangeII from '../problems/CoinChangeII';
 import SubarraysWithKDistinct from '../problems/SubarraysWithKDistinct';
 import ShortestPathBinaryMatrix from '../problems/ShortestPathBinaryMatrix';
 import MinSwapsAlternating from '../problems/MinSwapsAlternating';
+import ConvertSortedListToBST from '../problems/ConvertSortedListToBST';
+import SameTree from '../problems/SameTree';
+import UniquePaths from '../problems/UniquePaths';
+import UniquePathsII from '../problems/UniquePathsII';
+import PathSum from '../problems/PathSum';
 
 export const PROBLEMS = [
     {
@@ -573,6 +578,280 @@ public:
             if (s[i] != start) swaps++;
         }
         return swaps;
+    }
+};`
+        }
+    },
+    {
+        id: '109',
+        title: 'Convert Sorted List to Binary Search Tree',
+        difficulty: 'Medium',
+        description: 'Given the head of a singly linked list where elements are sorted in ascending order, convert it to a height-balanced binary search tree.',
+        component: ConvertSortedListToBST,
+        solutions: {
+            java: `class Solution {
+    public TreeNode sortedListToBST(ListNode head) {
+        if(head==null) return null;
+        return toBST(head, null);
+    }
+    public TreeNode toBST(ListNode head, ListNode tail){
+        ListNode slow = head;
+        ListNode fast = head;
+        if(head==tail) return null;
+        
+        while(fast!=tail && fast.next!=tail){
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        TreeNode thead = new TreeNode(slow.val);
+        thead.left = toBST(head, slow);
+        thead.right = toBST(slow.next, tail);
+        return thead;
+    }
+}`,
+            python: `class Solution:
+    def sortedListToBST(self, head: Optional[ListNode]) -> Optional[TreeNode]:
+        if not head:
+            return None
+        
+        def find_mid(left, right):
+            slow = fast = left
+            while fast != right and fast.next != right:
+                slow = slow.next
+                fast = fast.next.next
+            return slow
+
+        def helper(left, right):
+            if left == right:
+                return None
+            
+            mid = find_mid(left, right)
+            node = TreeNode(mid.val)
+            node.left = helper(left, mid)
+            node.right = helper(mid.next, right)
+            return node
+            
+        return helper(head, None)`,
+            cpp: `class Solution {
+public:
+    TreeNode* sortedListToBST(ListNode* head) {
+        if (!head) return nullptr;
+        if (!head->next) return new TreeNode(head->val);
+        
+        ListNode* slow = head;
+        ListNode* fast = head;
+        ListNode* prev = nullptr;
+        
+        while (fast && fast->next) {
+            fast = fast->next->next;
+            prev = slow;
+            slow = slow->next;
+        }
+        
+        TreeNode* root = new TreeNode(slow->val);
+        if (prev) {
+            prev->next = nullptr;
+            root->left = sortedListToBST(head);
+        }
+        root->right = sortedListToBST(slow->next);
+        
+        return root;
+    }
+};`
+        }
+    },
+    {
+        id: '100',
+        title: 'Same Tree',
+        difficulty: 'Easy',
+        description: 'Given the roots of two binary trees p and q, write a function to check if they are the same or not. Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.',
+        component: SameTree,
+        solutions: {
+            java: `class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null) return true;
+        if (p == null || q == null) return false;
+        if (p.val != q.val) return false;
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+}`,
+            python: `class Solution:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+        if not p and not q:
+            return True
+        if not p or not q or p.val != q.val:
+            return False
+            
+        return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)`,
+            cpp: `class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        if (!p && !q) return true;
+        if (!p || !q || p->val != q->val) return false;
+        
+        return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+    }
+};`
+        }
+    },
+    {
+        id: '62',
+        title: 'Unique Paths',
+        difficulty: 'Medium',
+        description: 'There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m-1][n-1]). The robot can only move either down or right at any point in time. Given the two integers m and n, return the number of possible unique paths that the robot can take to reach the bottom-right corner.',
+        component: UniquePaths,
+        solutions: {
+            java: `class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        
+        for (int i = 0; i < m; i++) dp[i][0] = 1;
+        for (int j = 0; j < n; j++) dp[0][j] = 1;
+        
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+}`,
+            python: `class Solution:
+    def uniquePaths(self, m: int, n: int) -> int:
+        dp = [[1] * n for _ in range(m)]
+        
+        for i in range(1, m):
+            for j in range(1, n):
+                dp[i][j] = dp[i-1][j] + dp[i][j-1]
+                
+        return dp[m-1][n-1]`,
+            cpp: `class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, 1));
+        
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+};`
+        }
+    },
+    {
+        id: '63',
+        title: 'Unique Paths II',
+        difficulty: 'Medium',
+        description: 'You are given an m x n integer array grid. There is a robot initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time. An obstacle and space are marked as 1 or 0 respectively in grid. A path that the robot takes cannot include any square that is an obstacle. Return the number of possible unique paths that the robot can take to reach the bottom-right corner.',
+        component: UniquePathsII,
+        solutions: {
+            java: `class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        if (obstacleGrid[0][0] == 1) return 0;
+
+        obstacleGrid[0][0] = 1;
+
+        // Fill first column
+        for (int i = 1; i < m; i++) {
+            obstacleGrid[i][0] = (obstacleGrid[i][0] == 0 && obstacleGrid[i - 1][0] == 1) ? 1 : 0;
+        }
+
+        // Fill first row
+        for (int i = 1; i < n; i++) {
+            obstacleGrid[0][i] = (obstacleGrid[0][i] == 0 && obstacleGrid[0][i - 1] == 1) ? 1 : 0;
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (obstacleGrid[i][j] == 0) {
+                    obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
+                } else {
+                    obstacleGrid[i][j] = 0;
+                }
+            }
+        }
+        return obstacleGrid[m - 1][n - 1];
+    }
+}`,
+            python: `class Solution:
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        m, n = len(obstacleGrid), len(obstacleGrid[0])
+        if obstacleGrid[0][0] == 1:
+            return 0
+            
+        obstacleGrid[0][0] = 1 
+
+        for i in range(1, m):
+            obstacleGrid[i][0] = int(obstacleGrid[i][0] == 0 and obstacleGrid[i-1][0] == 1)
+            
+        for j in range(1, n):
+            obstacleGrid[0][j] = int(obstacleGrid[0][j] == 0 and obstacleGrid[0][j-1] == 1)
+            
+        for i in range(1, m):
+            for j in range(1, n):
+                if obstacleGrid[i][j] == 0:
+                    obstacleGrid[i][j] = obstacleGrid[i-1][j] + obstacleGrid[i][j-1]
+                else:
+                    obstacleGrid[i][j] = 0
+                    
+        return obstacleGrid[m-1][n-1]`,
+            cpp: `class Solution {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        if (obstacleGrid[0][0] == 1) return 0;
+        int m = obstacleGrid.size(), n = obstacleGrid[0].size();
+        obstacleGrid[0][0] = 1;
+        
+        for (int i = 1; i < m; i++)
+            obstacleGrid[i][0] = (obstacleGrid[i][0] == 0 && obstacleGrid[i-1][0] == 1) ? 1 : 0;
+            
+        for (int i = 1; i < n; i++)
+            obstacleGrid[0][i] = (obstacleGrid[0][i] == 0 && obstacleGrid[0][i-1] == 1) ? 1 : 0;
+            
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (obstacleGrid[i][j] == 0)
+                    obstacleGrid[i][j] = obstacleGrid[i-1][j] + obstacleGrid[i][j-1];
+                else
+                    obstacleGrid[i][j] = 0;
+            }
+        }
+        return obstacleGrid[m-1][n-1];
+    }
+};`
+        }
+    },
+    {
+        id: '112',
+        title: 'Path Sum',
+        difficulty: 'Easy',
+        description: 'Given the root of a binary tree and an integer targetSum, return true if the tree has a root-to-leaf path such that adding up all the values along the path equals targetSum. A leaf is a node with no children.',
+        component: PathSum,
+        solutions: {
+            java: `class Solution {
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        if (root == null) return false;
+        if (root.left == null && root.right == null) return targetSum == root.val;
+        return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);
+    }
+}`,
+            python: `class Solution:
+    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:
+        if not root:
+             return False
+        if not root.left and not root.right:
+             return targetSum == root.val
+        return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)`,
+            cpp: `class Solution {
+public:
+    bool hasPathSum(TreeNode* root, int targetSum) {
+        if (!root) return false;
+        if (!root->left && !root->right) return targetSum == root->val;
+        return hasPathSum(root->left, targetSum - root->val) || hasPathSum(root->right, targetSum - root->val);
     }
 };`
         }
