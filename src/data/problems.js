@@ -12,8 +12,189 @@ import SameTree from '../problems/SameTree';
 import UniquePaths from '../problems/UniquePaths';
 import UniquePathsII from '../problems/UniquePathsII';
 import PathSum from '../problems/PathSum';
+import LengthOfLastWord from '../problems/LengthOfLastWord';
+import RegularExpressionMatching from '../problems/RegularExpressionMatching';
+import WildcardMatching from '../problems/WildcardMatching';
 
 export const PROBLEMS = [
+    {
+        id: '44',
+        title: 'Wildcard Matching',
+        difficulty: 'Hard',
+        description: 'Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for \'?\' and \'*\' where: \'?\' Matches any single character. \'*\' Matches any sequence of characters (including the empty sequence). The matching should cover the entire input string (not partial).',
+        component: WildcardMatching,
+        solutions: {
+            java: `class Solution {
+    public boolean isMatch(String s, String p) {
+        int m = s.length(), n = p.length();
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+        for (int j = 1; j <= n; j++) {
+            if (p.charAt(j - 1) == '*') {
+                dp[0][j] = dp[0][j - 1];
+            }
+        }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (p.charAt(j - 1) == '*') {
+                    dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+                } else if (p.charAt(j - 1) == '?' || s.charAt(i - 1) == p.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}`,
+            python: `class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        m, n = len(s), len(p)
+        dp = [[False] * (n + 1) for _ in range(m + 1)]
+        dp[0][0] = True
+        
+        for j in range(1, n + 1):
+            if p[j-1] == '*':
+                dp[0][j] = dp[0][j-1]
+                
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if p[j-1] == '*':
+                    dp[i][j] = dp[i][j-1] or dp[i-1][j]
+                elif p[j-1] == '?' or s[i-1] == p[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                    
+        return dp[m][n]`,
+            cpp: `class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.size(), n = p.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+        dp[0][0] = true;
+        
+        for (int j = 1; j <= n; j++) {
+            if (p[j - 1] == '*') dp[0][j] = dp[0][j - 1];
+        }
+        
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (p[j - 1] == '*') {
+                    dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+                } else if (p[j - 1] == '?' || s[i - 1] == p[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};`
+        }
+    },
+    {
+        id: '10',
+        title: 'Regular Expression Matching',
+        difficulty: 'Hard',
+        description: 'Given an input string s and a pattern p, implement regular expression matching with support for \'.\' and \'*\' where: \'.\' Matches any single character. \'*\' Matches zero or more of the preceding element. The matching should cover the entire input string (not partial).',
+        component: RegularExpressionMatching,
+        solutions: {
+            java: `class Solution {
+    public boolean isMatch(String s, String p) {
+        if (s == null || p == null) return false;
+        boolean[][] dp = new boolean[s.length() + 1][p.length() + 1];
+        dp[0][0] = true;
+        for (int i = 0; i < p.length(); i++) {
+            if (p.charAt(i) == '*' && dp[0][i - 1]) {
+                dp[0][i + 1] = true;
+            }
+        }
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j < p.length(); j++) {
+                if (p.charAt(j) == '.') {
+                    dp[i + 1][j + 1] = dp[i][j];
+                }
+                if (p.charAt(j) == s.charAt(i)) {
+                    dp[i + 1][j + 1] = dp[i][j];
+                }
+                if (p.charAt(j) == '*') {
+                    if (p.charAt(j - 1) != s.charAt(i) && p.charAt(j - 1) != '.') {
+                        dp[i + 1][j + 1] = dp[i + 1][j - 1];
+                    } else {
+                        dp[i + 1][j + 1] = (dp[i + 1][j] || dp[i][j + 1] || dp[i + 1][j - 1]);
+                    }
+                }
+            }
+        }
+        return dp[s.length()][p.length()];
+    }
+}`,
+            python: `class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]
+        dp[0][0] = True
+        
+        for j in range(1, len(p) + 1):
+            if p[j-1] == '*':
+                dp[0][j] = dp[0][j-2]
+                
+        for i in range(1, len(s) + 1):
+            for j in range(1, len(p) + 1):
+                if p[j-1] == '.' or p[j-1] == s[i-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                elif p[j-1] == '*':
+                    dp[i][j] = dp[i][j-2]
+                    if p[j-2] == '.' or p[j-2] == s[i-1]:
+                        dp[i][j] = dp[i][j] or dp[i-1][j]
+                        
+        return dp[len(s)][len(p)]`,
+            cpp: `class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.size(), n = p.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+        dp[0][0] = true;
+        for (int i = 0; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (p[j - 1] == '*') {
+                    dp[i][j] = dp[i][j - 2] || (i && dp[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'));
+                } else {
+                    dp[i][j] = i && dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};`
+        }
+    },
+    {
+        id: '58',
+        title: 'Length of Last Word',
+        difficulty: 'Easy',
+        description: 'Given a string s consisting of words and spaces, return the length of the last word in the string. A word is a maximal substring consisting of non-space characters only.',
+        component: LengthOfLastWord,
+        solutions: {
+            java: `class Solution {
+    public int lengthOfLastWord(String s) {
+        s = s.trim();
+        return s.length() - s.lastIndexOf(" ") - 1;
+    }
+}`,
+            python: `class Solution:
+    def lengthOfLastWord(self, s: str) -> int:
+        return len(s.strip().split(" ")[-1])`,
+            cpp: `class Solution {
+public:
+    int lengthOfLastWord(string s) {
+        int len = 0, tail = s.length() - 1;
+        while (tail >= 0 && s[tail] == ' ') tail--;
+        while (tail >= 0 && s[tail] != ' ') {
+            len++;
+            tail--;
+        }
+        return len;
+    }
+};`
+        }
+    },
     {
         id: '124',
         title: 'Binary Tree Maximum Path Sum',
