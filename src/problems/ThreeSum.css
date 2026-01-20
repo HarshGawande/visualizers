@@ -1,0 +1,110 @@
+.three-sum-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    align-items: center;
+}
+
+.array-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    position: relative;
+    min-height: 100px;
+}
+
+.array-item {
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--border);
+    background-color: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    position: relative;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.array-item.current-i {
+    background-color: hsl(var(--primary) / 0.2);
+    border-color: hsl(var(--primary));
+    transform: translateY(-5px);
+}
+
+.array-item.pointer-left {
+    background-color: #facc15;
+    /* Yellow */
+    color: black;
+}
+
+.array-item.pointer-right {
+    background-color: #ef4444;
+    /* Red */
+    color: white;
+}
+
+.array-item.found-part {
+    box-shadow: 0 0 10px 2px #22c55e;
+    /* Green glow */
+}
+
+.pointer-label {
+    position: absolute;
+    bottom: -25px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+}
+
+.calculation-box {
+    background-color: var(--secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: monospace;
+    text-align: center;
+    min-width: 300px;
+    border: 1px solid var(--border);
+}
+
+.found-triplets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 100%;
+}
+
+.triplet-badge {
+    padding: 0.5rem 1rem;
+    background-color: var(--muted);
+    border-radius: 20px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    border: 1px solid var(--border);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.array-index {
+    position: absolute;
+    top: -20px;
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+}

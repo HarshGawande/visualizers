@@ -15,6 +15,9 @@ import PathSum from '../problems/PathSum';
 import LengthOfLastWord from '../problems/LengthOfLastWord';
 import RegularExpressionMatching from '../problems/RegularExpressionMatching';
 import WildcardMatching from '../problems/WildcardMatching';
+import MedianOfTwoSortedArrays from '../problems/MedianOfTwoSortedArrays';
+import ThreeSum from '../problems/ThreeSum';
+import ThreeSumClosest from '../problems/ThreeSumClosest';
 
 export const PROBLEMS = [
     {
@@ -1033,6 +1036,235 @@ public:
         if (!root) return false;
         if (!root->left && !root->right) return targetSum == root->val;
         return hasPathSum(root->left, targetSum - root->val) || hasPathSum(root->right, targetSum - root->val);
+    }
+};`
+        }
+    },
+    {
+        id: '4',
+        title: 'Median of Two Sorted Arrays',
+        difficulty: 'Hard',
+        description: 'Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).',
+        component: MedianOfTwoSortedArrays,
+        solutions: {
+            java: `class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1.length > nums2.length) {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        int m = nums1.length, n = nums2.length;
+        int low = 0, high = m;
+        while (low <= high) {
+            int partitionX = (low + high) / 2;
+            int partitionY = (m + n + 1) / 2 - partitionX;
+            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : nums1[partitionX - 1];
+            int minRightX = (partitionX == m) ? Integer.MAX_VALUE : nums1[partitionX];
+            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : nums2[partitionY - 1];
+            int minRightY = (partitionY == n) ? Integer.MAX_VALUE : nums2[partitionY];
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                if ((m + n) % 2 == 0) {
+                    return (Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;
+                } else {
+                    return Math.max(maxLeftX, maxLeftY);
+                }
+            } else if (maxLeftX > minRightY) {
+                high = partitionX - 1;
+            } else {
+                low = partitionX + 1;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+}`,
+            python: `class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
+        m, n = len(nums1), len(nums2)
+        low, high = 0, m
+        while low <= high:
+            partitionX = (low + high) // 2
+            partitionY = (m + n + 1) // 2 - partitionX
+            maxLeftX = float('-inf') if partitionX == 0 else nums1[partitionX - 1]
+            minRightX = float('inf') if partitionX == m else nums1[partitionX]
+            maxLeftY = float('-inf') if partitionY == 0 else nums2[partitionY - 1]
+            minRightY = float('inf') if partitionY == n else nums2[partitionY]
+            
+            if maxLeftX <= minRightY and maxLeftY <= minRightX:
+                if (m + n) % 2 == 0:
+                    return (max(maxLeftX, maxLeftY) + min(minRightX, minRightY)) / 2
+                else:
+                    return max(maxLeftX, maxLeftY)
+            elif maxLeftX > minRightY:
+                high = partitionX - 1
+            else:
+                low = partitionX + 1`,
+            cpp: `class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        if (nums1.size() > nums2.size()) return findMedianSortedArrays(nums2, nums1);
+        int m = nums1.size(), n = nums2.size();
+        int low = 0, high = m;
+        while (low <= high) {
+            int partitionX = (low + high) / 2;
+            int partitionY = (m + n + 1) / 2 - partitionX;
+            int maxLeftX = (partitionX == 0) ? INT_MIN : nums1[partitionX - 1];
+            int minRightX = (partitionX == m) ? INT_MAX : nums1[partitionX];
+            int maxLeftY = (partitionY == 0) ? INT_MIN : nums2[partitionY - 1];
+            int minRightY = (partitionY == n) ? INT_MAX : nums2[partitionY];
+
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                if ((m + n) % 2 == 0) {
+                    return (max(maxLeftX, maxLeftY) + min(minRightX, minRightY)) / 2.0;
+                } else {
+                    return max(maxLeftX, maxLeftY);
+                }
+            } else if (maxLeftX > minRightY) {
+                high = partitionX - 1;
+            } else {
+                low = partitionX + 1;
+            }
+        }
+        return 0.0;
+    }
+};`
+        }
+    },
+    {
+        id: '15',
+        title: '3Sum',
+        difficulty: 'Medium',
+        description: 'Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0. Notice that the solution set must not contain duplicate triplets.',
+        component: ThreeSum,
+        solutions: {
+            java: `class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (i == 0 || (i > 0 && nums[i] != nums[i - 1])) {
+                int lo = i + 1, hi = nums.length - 1, sum = 0 - nums[i];
+                while (lo < hi) {
+                    if (nums[lo] + nums[hi] == sum) {
+                        res.add(Arrays.asList(nums[i], nums[lo], nums[hi]));
+                        while (lo < hi && nums[lo] == nums[lo + 1]) lo++;
+                        while (lo < hi && nums[hi] == nums[hi - 1]) hi--;
+                        lo++; hi--;
+                    } else if (nums[lo] + nums[hi] < sum) lo++;
+                    else hi--;
+                }
+            }
+        }
+        return res;
+    }
+}`,
+            python: `class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        res = []
+        
+        for i, a in enumerate(nums):
+            if i > 0 and a == nums[i - 1]:
+                continue
+            
+            l, r = i + 1, len(nums) - 1
+            while l < r:
+                threeSum = a + nums[l] + nums[r]
+                if threeSum > 0:
+                    r -= 1
+                elif threeSum < 0:
+                    l += 1
+                else:
+                    res.append([a, nums[l], nums[r]])
+                    l += 1
+                    while nums[l] == nums[l - 1] and l < r:
+                        l += 1
+        return res`,
+            cpp: `class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        for (int i = 0; i < nums.size(); i++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            int l = i + 1, r = nums.size() - 1;
+            while (l < r) {
+                int sum = nums[i] + nums[l] + nums[r];
+                if (sum > 0) r--;
+                else if (sum < 0) l++;
+                else {
+                    res.push_back({nums[i], nums[l], nums[r]});
+                    while (l < r && nums[l] == nums[l+1]) l++;
+                    while (l < r && nums[r] == nums[r-1]) r--;
+                    l++; r--;
+                }
+            }
+        }
+        return res;
+    }
+};`
+        }
+    },
+    {
+        id: '16',
+        title: '3Sum Closest',
+        difficulty: 'Medium',
+        description: 'Given an integer array nums of length n and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution.',
+        component: ThreeSumClosest,
+        solutions: {
+            java: `class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int closestSum = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < nums.length - 2; i++) {
+            int l = i + 1, r = nums.length - 1;
+            while (l < r) {
+                int sum = nums[i] + nums[l] + nums[r];
+                if (Math.abs(target - sum) < Math.abs(target - closestSum)) {
+                    closestSum = sum;
+                }
+                if (sum < target) {
+                    l++;
+                } else {
+                    r--;
+                }
+            }
+        }
+        return closestSum;
+    }
+}`,
+            python: `class Solution:
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        nums.sort()
+        res = sum(nums[:3])
+        for i in range(len(nums) - 2):
+            l, r = i + 1, len(nums) - 1
+            while l < r:
+                s = nums[i] + nums[l] + nums[r]
+                if abs(s - target) < abs(res - target):
+                    res = s
+                if s < target:
+                    l += 1
+                else: 
+                    r -= 1
+        return res`,
+            cpp: `class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int closest = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < nums.size() - 2; i++) {
+            int l = i + 1, r = nums.size() - 1;
+            while (l < r) {
+                int sum = nums[i] + nums[l] + nums[r];
+                if (abs(sum - target) < abs(closest - target)) {
+                    closest = sum;
+                }
+                if (sum < target) l++;
+                else r--;
+            }
+        }
+        return closest;
     }
 };`
         }

@@ -1,0 +1,134 @@
+.three-sum-closest-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    align-items: center;
+}
+
+.array-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    position: relative;
+    min-height: 100px;
+}
+
+.array-item {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border);
+    background-color: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    position: relative;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.array-item.current-i {
+    background-color: hsl(var(--primary) / 0.2);
+    border-color: hsl(var(--primary));
+    transform: translateY(-5px);
+}
+
+.array-item.pointer-left {
+    background-color: #facc15;
+    /* Yellow */
+    color: black;
+}
+
+.array-item.pointer-right {
+    background-color: #ef4444;
+    /* Red */
+    color: white;
+}
+
+.array-item.closest-combo {
+    box-shadow: 0 0 15px 4px #3b82f6;
+    /* Blue glow for closest found */
+    z-index: 10;
+}
+
+.pointer-label {
+    position: absolute;
+    bottom: -25px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+.stat-box {
+    background-color: var(--secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+    font-weight: 600;
+}
+
+.stat-value {
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.stat-value.highlight {
+    color: #22c55e;
+    /* Green */
+    animation: pulse 0.5s ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.diff-bar {
+    width: 100%;
+    height: 6px;
+    background-color: var(--muted);
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.diff-fill {
+    height: 100%;
+    background-color: hsl(var(--primary));
+    transition: width 0.3s ease;
+}
