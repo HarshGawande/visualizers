@@ -18,6 +18,10 @@ import WildcardMatching from '../problems/WildcardMatching';
 import MedianOfTwoSortedArrays from '../problems/MedianOfTwoSortedArrays';
 import ThreeSum from '../problems/ThreeSum';
 import ThreeSumClosest from '../problems/ThreeSumClosest';
+import PowXN from '../problems/PowXN';
+import LongestValidParentheses from '../problems/LongestValidParentheses';
+import WordPattern from '../problems/WordPattern';
+import IntersectionOfTwoLinkedLists from '../problems/IntersectionOfTwoLinkedLists';
 
 export const PROBLEMS = [
     {
@@ -1265,6 +1269,242 @@ public:
             }
         }
         return closest;
+    }
+};`
+        }
+    },
+    {
+        id: '50',
+        title: 'Pow(x, n)',
+        difficulty: 'Medium',
+        description: 'Implement pow(x, n), which calculates x raised to the power n (i.e., x^n).',
+        component: PowXN,
+        solutions: {
+            java: `class Solution {
+    public double myPow(double x, int n) {
+        long N = n;
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
+        }
+        double ans = 1;
+        double current_product = x;
+        for (long i = N; i > 0; i /= 2) {
+            if ((i % 2) == 1) {
+                ans = ans * current_product;
+            }
+            current_product = current_product * current_product;
+        }
+        return ans;
+    }
+}`,
+            python: `class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        if n < 0:
+            x = 1 / x
+            n = -n
+        pow = 1
+        while n:
+            if n & 1:
+                pow *= x
+            x *= x
+            n >>= 1
+        return pow`,
+            cpp: `class Solution {
+public:
+    double myPow(double x, int n) {
+        long long N = n;
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
+        }
+        double ans = 1;
+        double current_product = x;
+        for (long long i = N; i > 0; i /= 2) {
+            if (i % 2 == 1) {
+                ans = ans * current_product;
+            }
+            current_product = current_product * current_product;
+        }
+        return ans;
+    }
+};`
+        }
+    },
+    {
+        id: '32',
+        title: 'Longest Valid Parentheses',
+        difficulty: 'Hard',
+        description: 'Given a string containing just the characters \'(\' and \')\', return the length of the longest valid (well-formed) parentheses substring.',
+        component: LongestValidParentheses,
+        solutions: {
+            java: `class Solution {
+    public int longestValidParentheses(String s) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int maxLen = 0;
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if (stack.isEmpty()) {
+                    stack.push(i);
+                } else {
+                    maxLen = Math.max(maxLen, i - stack.peek());
+                }
+            }
+        }
+        return maxLen;
+    }
+}`,
+            python: `class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        stack = [-1]
+        max_len = 0
+        
+        for i, char in enumerate(s):
+            if char == '(':
+                stack.append(i)
+            else:
+                stack.pop()
+                if not stack:
+                    stack.append(i)
+                else:
+                    max_len = max(max_len, i - stack[-1])
+        return max_len`,
+            cpp: `class Solution {
+public:
+    int longestValidParentheses(string s) {
+        stack<int> stk;
+        stk.push(-1);
+        int maxLen = 0;
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s[i] == '(') {
+                stk.push(i);
+            } else {
+                stk.pop();
+                if (stk.empty()) {
+                    stk.push(i); // Reset base
+                } else {
+                    maxLen = max(maxLen, i - stk.top());
+                }
+            }
+        }
+        return maxLen;
+    }
+};`
+        }
+    },
+    {
+        id: '290',
+        title: 'Word Pattern',
+        difficulty: 'Easy',
+        description: 'Given a pattern and a string s, find if s follows the same pattern. Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty word in s.',
+        component: WordPattern,
+        solutions: {
+            java: `class Solution {
+    public boolean wordPattern(String pattern, String s) {
+        String[] words = s.split(" ");
+        if (words.length != pattern.length())
+            return false;
+        Map index = new HashMap();
+        for (Integer i = 0; i < words.length; ++i)
+            if (index.put(pattern.charAt(i), i) != index.put(words[i], i))
+                return false;
+        return true;
+    }
+}`,
+            python: `class Solution:
+    def wordPattern(self, pattern: str, s: str) -> bool:
+        words = s.split(" ")
+        if len(pattern) != len(words):
+            return False
+        charToWord = {}
+        wordToChar = {}
+        
+        for c, w in zip(pattern, words):
+            if c in charToWord and charToWord[c] != w:
+                return False
+            if w in wordToChar and wordToChar[w] != c:
+                return False
+            charToWord[c] = w
+            wordToChar[w] = c
+            
+        return True`,
+            cpp: `class Solution {
+public:
+    bool wordPattern(string pattern, string s) {
+        vector<string> words;
+        stringstream ss(s);
+        string word;
+        while(ss >> word) words.push_back(word);
+        
+        if (pattern.size() != words.size()) return false;
+        
+        unordered_map<char, string> charToWord;
+        unordered_map<string, char> wordToChar;
+        
+        for (int i = 0; i < pattern.size(); i++) {
+            char c = pattern[i];
+            string w = words[i];
+            
+            if (charToWord.count(c) && charToWord[c] != w) return false;
+            if (wordToChar.count(w) && wordToChar[w] != c) return false;
+            
+            charToWord[c] = w;
+            wordToChar[w] = c;
+        }
+        return true;
+    }
+};`
+        }
+    },
+    {
+        id: '160',
+        title: 'Intersection of Two Linked Lists',
+        difficulty: 'Easy',
+        description: 'Given the heads of two singly linked-lists headA and headB, return the node at which the two lists intersect. If the two linked lists have no intersection at all, return null.',
+        component: IntersectionOfTwoLinkedLists,
+        solutions: {
+            java: `public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        
+        ListNode a = headA;
+        ListNode b = headB;
+        
+        while (a != b) {
+            a = (a == null) ? headB : a.next;
+            b = (b == null) ? headA : b.next;
+        }
+        
+        return a;
+    }
+}`,
+            python: `class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+        if not headA or not headB:
+            return None
+        
+        a, b = headA, headB
+        while a != b:
+            a = a.next if a else headB
+            b = b.next if b else headA
+        return a`,
+            cpp: `class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if (!headA || !headB) return NULL;
+        ListNode *a = headA;
+        ListNode *b = headB;
+        while (a != b) {
+            a = a ? a->next : headB;
+            b = b ? b->next : headA;
+        }
+        return a;
     }
 };`
         }

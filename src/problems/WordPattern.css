@@ -1,0 +1,129 @@
+.wp-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    width: 100%;
+}
+
+.wp-viz-area {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    width: 100%;
+    align-items: center;
+    padding: 2rem;
+}
+
+.wp-sequence-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
+
+.wp-item-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid hsl(var(--border));
+    background-color: hsl(var(--card));
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    min-width: 50px;
+    min-height: 50px;
+    font-family: monospace;
+    font-weight: bold;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.wp-item-box.active {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary) / 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
+}
+
+.wp-item-box.match {
+    border-color: hsl(142.1 76.2% 36.3%);
+    background-color: hsl(142.1 76.2% 36.3% / 0.1);
+}
+
+.wp-item-box.error {
+    border-color: hsl(var(--destructive));
+    background-color: hsl(var(--destructive) / 0.1);
+}
+
+.wp-label {
+    position: absolute;
+    top: -25px;
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.wp-maps-container {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.wp-map-card {
+    background: hsl(var(--secondary) / 0.3);
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.wp-map-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid hsl(var(--border));
+    padding-bottom: 0.5rem;
+}
+
+.wp-map-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 100px;
+}
+
+.wp-map-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: hsl(var(--background));
+    border-radius: 6px;
+    border: 1px solid hsl(var(--border));
+    font-family: monospace;
+}
+
+.wp-arrow {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.8rem;
+}
+
+.wp-connector {
+    position: absolute;
+    width: 2px;
+    background: hsl(var(--primary));
+    z-index: 10;
+    transform-origin: top center;
+}

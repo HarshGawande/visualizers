@@ -1,0 +1,171 @@
+.ill-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    width: 100%;
+}
+
+.ill-viz-area {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 3rem 1rem;
+    overflow-x: auto;
+    width: 100%;
+    min-height: 300px;
+}
+
+.ill-list-section {
+    display: flex;
+    align-items: center;
+}
+
+.ill-fork-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3rem;
+    /* Space between A and B branches */
+    margin-right: 2rem;
+    position: relative;
+}
+
+.ill-common-area {
+    display: flex;
+    align-items: center;
+}
+
+.ill-node {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--border));
+    background-color: hsl(var(--card));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    position: relative;
+    margin: 0 1.5rem;
+    /* Space for arrows */
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.ill-node.highlight-a {
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.3);
+    border-color: hsl(var(--primary));
+}
+
+.ill-node.highlight-b {
+    box-shadow: 0 0 0 4px hsl(0 84.2% 60.2% / 0.3);
+    border-color: hsl(0 84.2% 60.2%);
+}
+
+.ill-node.highlight-both {
+    box-shadow: 0 0 0 4px hsl(280 84% 60% / 0.3);
+    border-color: hsl(280 84% 60%);
+    background-color: hsl(280 84% 60% / 0.1);
+}
+
+.ill-node.intersect-found {
+    background-color: hsl(142.1 76.2% 36.3%);
+    color: white;
+    border-color: transparent;
+    transform: scale(1.2);
+}
+
+.ill-arrow {
+    position: absolute;
+    right: -28px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 2px;
+    background-color: hsl(var(--muted-foreground));
+}
+
+.ill-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid hsl(var(--muted-foreground));
+    border-right: 2px solid hsl(var(--muted-foreground));
+    transform: rotate(45deg);
+}
+
+/* Connector for the fork merge */
+.ill-fork-connector {
+    position: absolute;
+    width: 60px;
+    height: 2px;
+    background-color: hsl(var(--muted-foreground));
+    right: -50px;
+    transform-origin: left center;
+}
+
+.ill-pointer-label {
+    position: absolute;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    white-space: nowrap;
+    z-index: 20;
+    transition: all 0.3s ease;
+}
+
+.ill-ptr-a {
+    bottom: 55px;
+    /* Above node */
+    background-color: hsl(var(--primary));
+}
+
+.ill-ptr-a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid hsl(var(--primary));
+}
+
+.ill-ptr-b {
+    top: 55px;
+    /* Below node */
+    background-color: hsl(0 84.2% 60.2%);
+}
+
+.ill-ptr-b::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid hsl(0 84.2% 60.2%);
+}
+
+.ill-null {
+    width: 40px;
+    height: 40px;
+    border: 2px dashed hsl(var(--muted-foreground));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: hsl(var(--muted-foreground));
+    margin-left: 1.5rem;
+}
