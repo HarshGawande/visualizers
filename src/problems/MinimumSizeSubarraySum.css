@@ -1,0 +1,87 @@
+/* CSS for Minimum Size Subarray Sum */
+.array-container {
+    display: flex;
+    gap: 8px;
+    padding: 30px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.array-box {
+    width: 50px;
+    height: 50px;
+    border: 2px solid theme('colors.border');
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 1.25rem;
+    position: relative;
+    background-color: theme('colors.background');
+    transition: all 0.3s ease;
+}
+
+.array-box.active {
+    border-color: theme('colors.primary.DEFAULT');
+    background-color: theme('colors.primary.DEFAULT / 0.1');
+}
+
+.array-box.in-window {
+    background-color: theme('colors.blue.500 / 0.1') !important;
+    border-color: theme('colors.blue.500 / 0.5');
+}
+
+.array-box.valid-window {
+    background-color: theme('colors.green.500 / 0.2') !important;
+    border-color: theme('colors.green.500');
+}
+
+.box-index {
+    position: absolute;
+    top: -20px;
+    font-size: 10px;
+    color: theme('colors.muted.foreground');
+}
+
+.pointer-container {
+    position: absolute;
+    bottom: -30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: left 0.3s ease;
+}
+
+.pointer-arrow {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid theme('colors.foreground');
+}
+
+.pointer-label {
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.pointer-left .pointer-arrow {
+    border-bottom-color: theme('colors.orange.500');
+}
+
+.pointer-left .pointer-label {
+    color: theme('colors.orange.500');
+}
+
+.pointer-right .pointer-arrow {
+    border-bottom-color: theme('colors.blue.500');
+}
+
+.pointer-right .pointer-label {
+    color: theme('colors.blue.500');
+}

@@ -22,6 +22,8 @@ import PowXN from '../problems/PowXN';
 import LongestValidParentheses from '../problems/LongestValidParentheses';
 import WordPattern from '../problems/WordPattern';
 import IntersectionOfTwoLinkedLists from '../problems/IntersectionOfTwoLinkedLists';
+import CountCompleteTreeNodes from '../problems/CountCompleteTreeNodes';
+import MinimumSizeSubarraySum from '../problems/MinimumSizeSubarraySum';
 
 export const PROBLEMS = [
     {
@@ -1509,4 +1511,120 @@ public:
 };`
         }
     },
+    {
+        id: '222',
+        title: 'Count Complete Tree Nodes',
+        difficulty: 'Medium',
+        description: 'Given the root of a complete binary tree, return the number of the nodes. Design an algorithm that runs in less than O(n) time complexity.',
+        component: CountCompleteTreeNodes,
+        solutions: {
+            java: `class Solution {
+    public int countNodes(TreeNode root) {
+        int h = height(root);
+        if (h < 0) return 0;
+        if (height(root.right) == h - 1) {
+            return (1 << h) + countNodes(root.right);
+        } else {
+            return (1 << (h - 1)) + countNodes(root.left);
+        }
+    }
+
+    private int height(TreeNode root) {
+        return root == null ? -1 : 1 + height(root.left);
+    }
+}`,
+            python: `class Solution:
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        h = self.height(root)
+        if h < 0: return 0
+        
+        if self.height(root.right) == h - 1:
+            return (1 << h) + self.countNodes(root.right)
+        else:
+            return (1 << (h - 1)) + self.countNodes(root.left)
+            
+    def height(self, node):
+        return -1 if not node else 1 + self.height(node.left)`,
+            cpp: `class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        int h = height(root);
+        if (h < 0) return 0;
+        
+        if (height(root->right) == h - 1) {
+            return (1 << h) + countNodes(root->right);
+        } else {
+            return (1 << (h - 1)) + countNodes(root->left);
+        }
+    }
+    
+    int height(TreeNode* node) {
+        return node == nullptr ? -1 : 1 + height(node->left);
+    }
+};`
+        }
+    },
+    {
+        id: '209',
+        title: 'Minimum Size Subarray Sum',
+        difficulty: 'Medium',
+        description: 'Given an array of positive integers nums and a positive integer target, return the minimal length of a subarray whose sum is greater than or equal to target. If there is no such subarray, return 0 instead.',
+        component: MinimumSizeSubarraySum,
+        solutions: {
+            java: `class Solution {
+    public int minSubArrayLen(int target, int[] nums) {
+        int left = 0;
+        int right = 0;
+        int sum = 0;
+        int minLen = Integer.MAX_VALUE;
+
+        while (right < nums.length) {
+            sum += nums[right];
+            while (sum >= target) {
+                minLen = Math.min(minLen, right - left + 1);
+                sum -= nums[left];
+                left++;
+            }
+            right++;
+        }
+        return minLen == Integer.MAX_VALUE ? 0 : minLen;
+    }
+}`,
+            python: `class Solution:
+    def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+        n = len(nums)
+        left = 0
+        current_sum = 0
+        min_len = float('inf')
+        
+        for right in range(n):
+            current_sum += nums[right]
+            while current_sum >= target:
+                min_len = min(min_len, right - left + 1)
+                current_sum -= nums[left]
+                left += 1
+                
+        return min_len if min_len != float('inf') else 0`,
+            cpp: `class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int n = nums.size();
+        int left = 0, right = 0;
+        int sum = 0;
+        int minLen = INT_MAX;
+        
+        while (right < n) {
+            sum += nums[right];
+            while (sum >= target) {
+                minLen = min(minLen, right - left + 1);
+                sum -= nums[left];
+                left++;
+            }
+            right++;
+        }
+        return minLen == INT_MAX ? 0 : minLen;
+    }
+};`
+        }
+    }
 ];
